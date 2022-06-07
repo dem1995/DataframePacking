@@ -65,5 +65,5 @@ def test_load_tar_gzip2():
 
         df_dict = {df1_name:df1, df2_name:df2}
         tar_loc = os.path.join(temp_dir, "test_make_tar.tar.gz")
-        loc = saved_loc = save_frames_to_tar(df_dict, tar_loc, gzip=True)
-        df_dict_loaded = load_frames_from_tar(loc, gzip=True)
+        saved_loc = save_frames_to_tar(df_dict, tar_loc, gzip=True)
+        df_dict_loaded = load_frames_from_tar(saved_loc, gzip=True)

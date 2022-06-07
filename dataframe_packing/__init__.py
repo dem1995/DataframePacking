@@ -1,5 +1,6 @@
 # gist tags: tar tar.gz pandas dataframe
 import os
+from pathlib import Path
 import re
 import tarfile
 import pandas as pd
@@ -36,10 +37,11 @@ def save_frames_to_tar(
 
     # Make sure the data_path de-references all relative paths
     out_directory = os.path.realpath(os.path.expanduser(out_directory))
+    out_directory_dir = os.path.dirname(out_directory)
     
     # Make sure the directory exists
-    if not os.path.exists(out_directory):
-        os.makedirs(out_directory)
+    if not os.path.exists(out_directory_dir):
+        os.makedirs(out_directory_dir)
 
     # Create a tarfile into which frames can be added
     with tarfile.open(f"{out_directory}{ext}", mode=mode) as tfo:
@@ -49,21 +51,17 @@ def save_frames_to_tar(
             file_name:str = file_name.strip()
             file_name = file_name + ".csv"
 
-            # Compute the full path of the output file within the archive
-            archived_df_location = os.path.join(out_directory, file_name)
-
             # Create a temporary directory for packaging into a tar_file
-            with TemporaryDirectory(prefix='rev_processing__') as temp_dir:
-                
-                # Write a csv dump of the dataframe to a temporary file
-                temp_file_name = os.path.join(temp_dir, archived_df_location)
-                os.makedirs(os.path.dirname(temp_file_name), exist_ok=True)
-                df.to_csv(temp_file_name, index=False)
+            #temp_dir = TemporaryDirectory()
+            with TemporaryDirectory() as temp_dir:
+                temp_dir_path = Path(temp_dir)
+                file_loc = temp_dir_path/file_name
+                df.to_csv(file_loc, index=False)
 
                 # Add the temp file to the tarfile
-                tfo.add(temp_file_name, arcname=archived_df_location)
+                tfo.add(file_loc)
         filename = tfo.name
-    return tfo.name
+    return filename
 
         
 def load_frames_from_tar(in_tar_file:str, gzip=True) -> dict[str, pd.DataFrame]:

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='DataframePacking',
-    version='22.06.06.3',
+    version='22.06.07.01',
     #packages=['things_labels', 'things_labels.data', 'things_labels.data_labelling'],
     packages = find_packages(exclude=["*_old*", "*old_", "tests*", "venv*"]),
     license='',
